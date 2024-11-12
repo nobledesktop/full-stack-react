@@ -1,0 +1,97 @@
+[
+  {
+    "characterName": "Iron Man",
+    "film": "Iron Man",
+    "year": 2008
+  },
+  {
+    "characterName": "Captain America",
+    "film": "Captain America: The First Avenger",
+    "year": 2011
+  },
+  {
+    "characterName": "Thor",
+    "film": "Thor",
+    "year": 2011
+  },
+  {
+    "characterName": "Hulk",
+    "film": "The Avengers",
+    "year": 2012
+  },
+  {
+    "characterName": "Black Widow",
+    "film": "Iron Man 2",
+    "year": 2010
+  },
+  {
+    "characterName": "Hawkeye",
+    "film": "Thor",
+    "year": 2011
+  },
+  {
+    "characterName": "Scarlet Witch",
+    "film": "Avengers: Age of Ultron",
+    "year": 2015
+  },
+  {
+    "characterName": "Vision",
+    "film": "Avengers: Age of Ultron",
+    "year": 2015
+  },
+  {
+    "characterName": "Spider-Man",
+    "film": "Captain America: Civil War",
+    "year": 2016
+  },
+  {
+    "characterName": "Doctor Strange",
+    "film": "Doctor Strange",
+    "year": 2016
+  },
+  {
+    "characterName": "Black Panther",
+    "film": "Captain America: Civil War",
+    "year": 2016
+  },
+  {
+    "characterName": "Ant-Man",
+    "film": "Captain America: Civil War",
+    "year": 2016
+  },
+  {
+    "characterName": "Captain Marvel",
+    "film": "Captain Marvel",
+    "year": 2019
+  },
+  {
+    "characterName": "The Wasp",
+    "film": "And-Man and the Wasp",
+    "year": 2018
+  },
+  {
+    "characterName": "Falcon",
+    "film": "Captain America: The Winter Soldier",
+    "year": 2014
+  },
+  {
+    "characterName": "War Machine",
+    "film": "Iron Man 2",
+    "year": 2014
+  },
+  {
+    "characterName": "Valkyrie",
+    "film": "Thor: Love and Thunder",
+    "year": 2022
+  },
+  {
+    "characterName": "Winter Soldier",
+    "film": "Captain America: The Winter Soldier",
+    "year": 2014
+  },
+  {
+    "characterName": "Okoye",
+    "film": "Black Panther",
+    "year": 2018
+  }
+]

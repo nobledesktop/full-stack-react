@@ -238,19 +238,19 @@ Next we should begin structuring this side of our applications with more folders
 - `controllers`
 - `models`
 
-24. In the `models` folder, create `McuModel.js`
+24. In the `models` folder, create `Debut.js`
 
-25. The file `mcu.json` should be included with this README. Move the file `mcu.json` into the `models` folder.
+25. The file `debuts.json` should be included with this README. Move the file `debuts.json` into the `models` folder.
 
-26. In `McuModel.js`, set up the schema for the only collection we're using for this application. The schema should follow the `mcu.json` file since that will serve as our starter data.
+26. In `Debut.js`, set up the schema for the only collection we're using for this application. The schema should follow the `debuts.json` file since that will serve as our starter data.
 
-`McuModel.js` should look like this:
+`Debut.js` should look like this:
 
 ```js
 const mongoose = require("mongoose");
 
-const McuSchema = new mongoose.Schema({
-  name: {
+const debutsSchema = new mongoose.Schema({
+  characterName: {
     type: String,
     unique: true,
     required: true,
@@ -261,41 +261,41 @@ const McuSchema = new mongoose.Schema({
   debutYear: Number,,
 });
 
-const Mcu = mongoose.model("Mcu", McuSchema);
+const Debut = mongoose.model("Debut", debutsSchema);
 
-module.exports = Mcu;
+module.exports = Debut;
 ```
 
 Right now, MongoDB Compass shouldn't be showing the database just yet, so let's make sure to create it now before we write any requests to the server. This way, by the time we perform our first GET request, we will get back our starter data
 
 27. In MongoDB Compase, create a new database called `fullstack-db`. If your connection string in the `.env` file ends with a differently named database (the name comes after the `.net/`), make sure to name it the same.
 
-28. The collection name should be `mcus`
+28. The collection name should be `debuts`
 
-29. Select the `mcus` collection, click the green `Add data` button, click `select file` and upload the `mcu.json` from the `models` folder.
+29. Select the `debuts` collection, click the green `Add data` button, click `select file` and upload the `debuts.json` from the `models` folder.
 
 You should see all 19 entries in Compass now!
 
 We should now make routes to perform a GET request and see this collection in Postman.
 
-30. In the `controllers` folder, create a file called `McuController.js`
+30. In the `controllers` folder, create a file called `debutsController.js`
 
 In this file, we will write functions that communicate with our database. These functions will be used as a response to URL requests.
 
-31. Import the `McuModel` onto this file
+31. Import the `Debut` onto this file
 
 ```js
-const Mcu = require("../models/McuModel");
+const Debut = require("../models/Debut");
 ```
 
 This way we have access to the database.
 
-32. Write a function that responds with the entire collection of characters:
+32. Write a function that responds with the entire collection of debuts:
 
 ```js
-async function getAllCharacters(req, res) {
+async function getAllDebuts(req, res) {
   try {
-    let result = await Mcu.find({});
+    let result = await Debut.find({});
 
     res.json({
       message: "success",
@@ -304,19 +304,19 @@ async function getAllCharacters(req, res) {
   } catch (error) {
     res.json({
       message: "failure",
-      payload: `getAllCharacters error: ${error}`,
+      payload: `getAllDebuts error: ${error}`,
     });
   }
 }
 ```
 
-This should be familiar enough, we are using `Mcu.find({});` with no search criteria so that it returns with the entire collection.
+This should be familiar enough, we are using `Debut.find({});` with no search criteria so that it returns with the entire collection.
 
 33. Make sure to export this function:
 
 ```js
 module.exports = {
-  getAllCharacters,
+  getAllDebuts,
 };
 ```
 
@@ -324,7 +324,7 @@ It's written like this so that we can add more exports to it later.
 
 Next, we should create route so that there is a URL extention being listened to, that will respond to requests with the function we just wrote.
 
-34. In the `routes` folder, create a file called `mcuRouter.js`
+34. In the `routes` folder, create a file called `debutsRouter.js`
 
 35. Set up the express router and export it:
 
@@ -340,7 +340,7 @@ module.exports = router;
 36. Now let's make sure we plug the controller into the router:
 
 ```js
-const { getAllCharacters } = require("../controllers/McuController");
+const { getAllDebuts } = require("../controllers/debutsController");
 ```
 
 Make sure this goes directly underneath the Router imports. Again, The controller imports are written this way so we can easily import other functions later
@@ -348,8 +348,8 @@ Make sure this goes directly underneath the Router imports. Again, The controlle
 37. Above the export, let's write the first route:
 
 ```js
-// localhost:3001/api/allCharacters
-router.get("/allCharacters", getAllCharacters);
+// localhost:3001/api/allDebuts
+router.get("/allDebuts", getAllDebuts);
 ```
 
 Finally, the last thing to do is to plug the router into our `index.js` file.
@@ -357,25 +357,25 @@ Finally, the last thing to do is to plug the router into our `index.js` file.
 38. In between the Middleware and Server Listening sections, on the `index.js` file, set the routes up:
 
 ```js
-const McuRouter = require("./routes/McuRouter");
+const debutsRouter = require("./routes/debutsRouter");
 // localhost:3001/api/.....
-app.use("/api", McuRouter);
+app.use("/api", debutsRouter);
 ```
 
 As a reminder, here are how requests are handled throughout the server:
 
-- A request is made to `localhost:3001/api/allCharacters`
-- Our `index.js` file sees that the URL begins with `localhost:3001/api` and hands over the rest of the request to `./routes/McuRouter.js`
-- `./routes/mcuRouter.js` sees that the URL extension is `/allCharacters`, so it uses the `getAllCharacters` function from `./controllers/McuController.js`
-- `./controllers/McuController.js` Uses the model to make a request to the database when `await Mcu.find({})` occurs
+- A request is made to `localhost:3001/api/allDebuts`
+- Our `index.js` file sees that the URL begins with `localhost:3001/api` and hands over the rest of the request to `./routes/debutsRouter.js`
+- `./routes/debutsRouter.js` sees that the URL extension is `/allDebuts`, so it uses the `getAllDebuts` function from `./controllers/debutsController.js`
+- `./controllers/debutsController.js` Uses the model to make a request to the database when `await Debut.find({})` occurs
 - Summary:
 - Request > index > router > controller > model > MongoDB
 
 Now it's time to test this route!
 
-39. Use Postman to make a GET request to `localhost:3001/api/allCharacters`
+39. Use Postman to make a GET request to `localhost:3001/api/allDebuts`
 
-You should see all of the characters listed in the `payload` property of the response!
+You should see all of the debuts listed in the `payload` property of the response!
 
 ## Client setup (front-end)
 
@@ -417,7 +417,7 @@ export default App;
 const [serverData, setServerData] = useState([]);
 ```
 
-This is going to contain the list of characters from our database, which we will get when we perform a URL request to the server. Before we do that, we want to keep the URL safe in an environment variable.
+This is going to contain the list of debuts from our database, which we will get when we perform a URL request to the server. Before we do that, we want to keep the URL safe in an environment variable.
 
 49. Inside the `client` folder, create a file called `.env`
 
@@ -455,13 +455,13 @@ Now we'll use this URL to make a request to our local server and see if it's bei
 import axios from "axios";
 ```
 
-55. Between the `useState` and return statement, write a `useEffect` that will run only once on component load, and perform a URL request to get back an array of characters:
+55. Between the `useState` and return statement, write a `useEffect` that will run only once on component load, and perform a URL request to get back an array of debuts:
 
 ```jsx
 useEffect(() => {
-  async function getCharacters() {
+  async function getDebuts() {
     try {
-      const res = await axios.get(`${API_URL}/allCharacters`);
+      const res = await axios.get(`${API_URL}/allDebuts`);
       console.log(res.data.payload);
       setServerData(res.data.payload);
     } catch (e) {
@@ -469,11 +469,11 @@ useEffect(() => {
     }
   }
 
-  getCharacters();
+  getDebuts();
 }, []);
 ```
 
-Note that inside the `axios.get`, we're plugging in the `API_URL` that is hidden as an environment variable. We write in the `/allMcus` URL extension because that's the route we wrote to get back all the characters in our database.
+Note that inside the `axios.get`, we're plugging in the `API_URL` that is hidden as an environment variable. We write in the `/allDebuts` URL extension because that's the route we wrote to get back all the debuts in our database.
 
 It's also useful to note that the response from axios comes with some meta data, so the real response is in the `data` property. Also, the way we decided to response with data from the server is to have the raw response in the `payload` property. This is why the response is `res.data.payload`.
 
@@ -490,9 +490,9 @@ function App() {
   const [serverData, setServerData] = useState([]);
 
   useEffect(() => {
-    async function getCharacters() {
+    async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allCharacters`);
+        const res = await axios.get(`${API_URL}/allDebuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -500,7 +500,7 @@ function App() {
       }
     }
 
-    getCharacters();
+    getDebuts();
   }, []);
 
   return (
@@ -520,8 +520,8 @@ Now let's display the data on the page for the first time.
 ```jsx
 {
   serverData.length > 0 ? (
-    serverData.map((character) => {
-      return <li key={character._id}>{character.name}</li>;
+    serverData.map((debut) => {
+      return <li key={debut._id}>{debut.characterName}</li>;
     })
   ) : (
     <h1>loading...</h1>
@@ -529,43 +529,43 @@ Now let's display the data on the page for the first time.
 }
 ```
 
-When the page initially loads, we will see this "loading screen" (the `<h1>`) first because `serverData` will initally be an empty array with a length of 0. Once the `useEffect` runs and axios returns with data from our database via the server, then `serverData` will have a length greater than 0 and it will be mapped over to render a list of characters.
+When the page initially loads, we will see this "loading screen" (the `<h1>`) first because `serverData` will initally be an empty array with a length of 0. Once the `useEffect` runs and axios returns with data from our database via the server, then `serverData` will have a length greater than 0 and it will be mapped over to render a list of debuts.
 
-Also note that the key property inside the `<li>` tag is being passed the character's `_id` property from MongoDB. This is best practice because it will always be unique.
+Also note that the key property inside the `<li>` tag is being passed the debut's `_id` property from MongoDB. This is best practice because it will always be unique.
 
 ## Scaling the application
 
 Now that our `App.js` is expanding, it's time to start separating our concerns. We want the main `App.js` component to be an overview of the application, and we can have a separate component that will get all of our data and display it.
 
-57. In the `src` folder, create a file called `AllCharacters.js`
+57. In the `src` folder, create a file called `AllDebuts.js`
 
-58. In `AllCharacters.js` import `useState` and `useEffect`:
+58. In `AllDebuts.js` import `useState` and `useEffect`:
 
 ```jsx
 import React, { useState, useEffect } from `react`;
 ```
 
-59. Create a functional component called "AllCharacters" that returns an empty parenthetical block. Don't forget to export it.
+59. Create a functional component called "AllDebuts" that returns an empty parenthetical block. Don't forget to export it.
 
 ```jsx
-function AllCharacters() {
+function AllDebuts() {
     return (  );
 }
 
-export default AllCharacters;
+export default AllDebuts;
 ```
 
 60. Inside the empty return statement, place a `<ul></ul>` element
 
-61. From `App.js`, cut out the following line of code and move it to `AllCharacters.js` on the inside of the component, above the return statement:
+61. From `App.js`, cut out the following line of code and move it to `AllDebuts.js` on the inside of the component, above the return statement:
 
 ```jsx
 const [serverData, setServerData] = useState([]);
 ```
 
-The reason for this is because we're going to do the axios call only when this `AllCharacters` component gets rendered, so the data should be received & held on our new component.
+The reason for this is because we're going to do the axios call only when this `AllDebuts` component gets rendered, so the data should be received & held on our new component.
 
-62. Cut the following imports from `App.js` and move it into `AllCharacters.js`:
+62. Cut the following imports from `App.js` and move it into `AllDebuts.js`:
 
 ```jsx
 import { API_URL } from "./constants";
@@ -574,13 +574,13 @@ import axios from "axios";
 
 These imports, as usual, belong on the top of the page.
 
-63. Cut the following `useEffect` from `App.js` and move it into `AllCharacters.js` above the return statement:
+63. Cut the following `useEffect` from `App.js` and move it into `AllDebuts.js` above the return statement:
 
 ```jsx
 useEffect(() => {
-  async function getCharacters() {
+  async function getDebuts() {
     try {
-      const res = await axios.get(`${API_URL}/allCharacters`);
+      const res = await axios.get(`${API_URL}/allDebuts`);
       console.log(res.data.payload);
       setServerData(res.data.payload);
     } catch (e) {
@@ -588,18 +588,18 @@ useEffect(() => {
     }
   }
 
-  getCharacters();
+  getDebuts();
 }, []);
 ```
 
 As we know, because of the empty `[]` as a second argument to `useEffect`, the axios call will happen as soon as the component loads, and holds the data in the `serverData` state variable.
 
-64. Cut the following turnary operator from `App.js` and move it into `AllCharacters.js` inside of the `<ul>` tag:
+64. Cut the following turnary operator from `App.js` and move it into `AllDebuts.js` inside of the `<ul>` tag:
 
 ```jsx
 {
   serverData.length > 0 ? (
-    serverData.map((character) => <li key={character._id}>{character.name}</li>)
+    serverData.map((debut) => <li key={debut._id}>{debut.characterName}</li>)
   ) : (
     <h1>loading...</h1>
   );
@@ -608,20 +608,20 @@ As we know, because of the empty `[]` as a second argument to `useEffect`, the a
 
 Now it will render inside this component instead of in the main `App.js`
 
-The `AllCharacters.js` should now overall look like this:
+The `AllDebuts.js` should now overall look like this:
 
 ```jsx
 import React, { useState, useEffect } from "react";
 import { API_URL } from "./constants";
 import axios from "axios";
 
-function AllCharacters() {
+function AllDebuts() {
   const [serverData, setServerData] = useState([]);
 
   useEffect(() => {
-    async function getCharacters() {
+    async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allCharacters`);
+        const res = await axios.get(`${API_URL}/allDebuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -629,14 +629,14 @@ function AllCharacters() {
       }
     }
 
-    getCharacters();
+    getDebuts();
   }, []);
 
   return (
     <ul>
       {serverData.length > 0 ? (
-        serverData.map((character) => (
-          <li key={character._id}>{character.name}</li>
+        serverData.map((debut) => (
+          <li key={debut._id}>{debut.characterName}</li>
         ))
       ) : (
         <h1>loading...</h1>
@@ -645,7 +645,7 @@ function AllCharacters() {
   );
 }
 
-export default AllCharacters;
+export default AllDebuts;
 ```
 
 And this is what your `App.js` should look like so far:
@@ -667,21 +667,21 @@ Now let's display this component through the `App.js` component
 65. At the top of `App.js`, import the component we just created:
 
 ```jsx
-import AllCharacters from "./AllCharacters";
+import AllDebuts from "./AllDebuts";
 ```
 
-66. In `App.js` under the `<h1>` tag, display the `AllCharacters` component:
+66. In `App.js` under the `<h1>` tag, display the `AllDebuts` component:
 
 ```jsx
 return (
   <>
     <h1>This is an MCU app, see what year each hero debuted.</h1>
-    <AllCharacters />
+    <AllDebuts />
   </>
 );
 ```
 
-At this point, you should see all the characters listed in the browser!
+At this point, you should see all the debuts listed in the browser!
 
 At this point, we should only render components when the user decides to see it. We will now be applying React Router functionality, so that we can properly link to different components
 
@@ -712,15 +712,15 @@ Let's begin by defining some of our routes
 import { Routes, Route, Link } from "react-router-dom";
 ```
 
-69. As a reminder, the defined routes still belong inside of the return statement on `App.js`. Below the `AllCharacters` component, we can define our routes:
+69. As a reminder, the defined routes still belong inside of the return statement on `App.js`. Below the `AllDebuts` component, we can define our routes:
 
 ```jsx
 <Routes>
-  <Route path="/mcu" element={<AllCharacters />} />
+  <Route path="/debuts" element={<AllDebuts />} />
 </Routes>
 ```
 
-70. Under the `<h1>` tag, erase the `AllCharacters` component and replace it with a `<nav>` with links so that when a user clicks the link, the list of characters will show up:
+70. Under the `<h1>` tag, erase the `AllDebuts` component and replace it with a `<nav>` with links so that when a user clicks the link, the list of debuts will show up:
 
 ```jsx
 <h1>This is an MCU app, see what year each super hero debuted.</h1>
@@ -732,8 +732,8 @@ import { Routes, Route, Link } from "react-router-dom";
             </Link>
           </li>
           <li>
-            <Link to="/mcu">
-              See All Characters
+            <Link to="/debuts">
+              See All Debuts
             </Link>
           </li>
     </ul>
@@ -744,7 +744,7 @@ Overall, your `App.js` should now look like this:
 
 ```jsx
 import { Routes, Route, Link } from "react-router-dom";
-import AllCharacters from "./AllCharacters";
+import AllDebuts from "./AllDebuts";
 
 function App() {
   return (
@@ -753,13 +753,13 @@ function App() {
       <nav>
         <ul>
           <li>
-            <Link to="/mcu">See all characters</Link>
+            <Link to="/debuts">See all debuts</Link>
           </li>
         </ul>
       </nav>
 
       <Routes>
-        <Route path="/mcu" element={<AllCharacters />} />
+        <Route path="/debuts" element={<AllDebuts />} />
       </Routes>
     </>
   );
@@ -770,7 +770,7 @@ export default App;
 
 Now when you go to the browser, only after you click the link is when the front-end will send a URL request to the back-end.
 
-If you notice in the browser's console, you will get a warning that there are no routes that match "/" which is the base URL of our website. Let's build out a `Home` component so that we can toggle back and forth between something like a "landing page" and our list of characters.
+If you notice in the browser's console, you will get a warning that there are no routes that match "/" which is the base URL of our website. Let's build out a `Home` component so that we can toggle back and forth between something like a "landing page" and our list of debuts.
 
 71. In the `src` folder, create a file called `Home.js`
 
@@ -810,7 +810,7 @@ And here's the route:
 <Route path="/" element={<Home />}>
 ```
 
-Now you can toggle back and forth! Notice that you'll see **"Loading..."** for a moment, whenever you click **"See all characters"**. Feel free to replace this loading screen with any loading screen component of choice
+Now you can toggle back and forth! Notice that you'll see **"Loading..."** for a moment, whenever you click **"See all debuts"**. Feel free to replace this loading screen with any loading screen component of choice
 
 ## C/CRUD - Server-side Create functionality
 
@@ -818,27 +818,27 @@ Currently, this is a fullstack application with the ability to read directly fro
 
 The 2 files we're going to look at are:
 
-- `mcuController.js`
-- `mcuRouter.js`
+- `debutsController.js`
+- `debutsRouter.js`
 
 This is because all we need to do is write the database functionality on the Controller, and define the URL Route on the Router.
 
-74. In `mcuController.js`, write a function that creates a character to the database:
+74. In `debutsController.js`, write a function that creates a debut to the database:
 
 ```jsx
-async function createOneCharacter(req, res) {
+async function createOneDebut(req, res) {
   try {
-    let newCharacter = req.body;
+    let newDebut = req.body;
 
-    await Mcu.create(newCharacter);
+    await Debut.create(newDebut);
 
     res.json({
       message: "success",
-      payload: newCharacter,
+      payload: newDebut,
     });
   } catch (error) {
     let errorObj = {
-      message: "createOneCharacters failure",
+      message: "createOneDebuts failure",
       payload: error,
     };
 
@@ -848,35 +848,35 @@ async function createOneCharacter(req, res) {
 }
 ```
 
-The first thing to do is to is to make a `newCharacter` object that will capture all the details about the character from the body of the request. Then, send that to the database using `await Mcu.create(newCharacter);`. Finally, respond with the newly created character with a success message, to let you know that the data now exists in MongoDB.
+The first thing to do is to is to make a `newDebut` object that will capture all the details about the debut from the body of the request. Then, send that to the database using `await Debut.create(newDebut);`. Finally, respond with the newly created debut with a success message, to let you know that the data now exists in MongoDB.
 
 75. Make sure to export this function at the bottom of the page:
 
 ```jsx
 module.exports = {
-  getAllMcus,
-  createOneCharacter,
+  getAllDebuts,
+  createOneDebut,
 };
 ```
 
-76. In `McuRouter.js`, import the function and define the route to be a POST request at URL extension `'/oneMcu/:name'`:
+76. In `debutsRouter.js`, import the function and define the route to be a POST request at URL extension `'/oneDebut/:name'`:
 
 Here is the import:
 
 ```js
 const {
-  getAllMcus,
-  createOneCharacter,
-} = require("../controller/McuController");
+  getAllDebuts,
+  createOneDebut,
+} = require("../controller/debutsController");
 ```
 
 Here is the defined route:
 
 ```js
-router.post("/createOneCharacter", createOneCharacter);
+router.post("/createOneDebut", createOneDebut);
 ```
 
-77. Open up the Postman app, and make a POST request to `localhost:3001/Mcu/createOneCharacter`. Make sure that you open up the body tab, and type in JSON an object with character details to test it. For example:
+77. Open up the Postman app, and make a POST request to `localhost:3001/Debut/createOneDebut`. Make sure that you open up the body tab, and type in JSON an object with debut details to test it. For example:
 
 ```js
 {
@@ -886,15 +886,15 @@ router.post("/createOneCharacter", createOneCharacter);
 }
 ```
 
-When you make the request, you should see the object in the response! You can also double check with MongoDB Compass to see this new character in the `mcus` collection.
+When you make the request, you should see the object in the response! You can also double check with MongoDB Compass to see this new debut in the `debuts` collection.
 
-Now that the back-end is tested, we just need to add a route to the front-end and allow users of this application to create a character
+Now that the back-end is tested, we just need to add a route to the front-end and allow users of this application to create a debut
 
 ## C/CRUD - Client-side Create functionality
 
 For the user to be able to create a document of data and send it to the database, they will need a form on the front-end. We will create a component that contains that form, and set it up to send a body of data to our server in the same way we just tested it in Postman.
 
-78. In the `src` folder, create a file called `CreateCharacter.js`
+78. In the `src` folder, create a file called `CreateDebut.js`
 
 79. Import `useState`:
 
@@ -905,24 +905,24 @@ import React, { useState } from `react`;
 80. Create a functional component with an empty return parens:
 
 ```jsx
-function CreateCharacter() {
+function CreateDebut() {
     return (
 
     );
 }
 
-export default CreateCharacter;
+export default CreateDebut;
 ```
 
 81. Inside the empty return statement, place a `<form></form>` tag.
 
-Next, we're going to need state variables to temporarily hold character data. When we send the data from here, we will refer to these state variables as the values.
+Next, we're going to need state variables to temporarily hold debut data. When we send the data from here, we will refer to these state variables as the values.
 
 82. Create a state variable for `name`, `debut`, and `debutYear`. These can all be completed in a single object:
 
 ```jsx
-const [character, setCharacter] = useState({
-  name: "",
+const [debut, setDebut] = useState({
+  characterName: "",
   debutFilm: "",
   debutYear: 0,
 });
@@ -934,17 +934,17 @@ As a user fills out the form, these state variables should be updated with the v
 
 ```jsx
 <label>Name</label>
-<input value={character.name} onChange={(e) => setCharacter({...character, name: e.target.value})}/>
+<input value={debut.characterName} onChange={(e) => setDebut({...debut, characterName: e.target.value})}/>
 <br /><br />
 <label>DebutFilm</label>
-<input value={character.debutFilm} onChange={(e) => setCharacter({...character, debutFilm: e.target.value})}/>
+<input value={debut.debutFilm} onChange={(e) => setDebut({...debut, debutFilm: e.target.value})}/>
 <br /><br />
 <label>DebutYear</label>
-<input value={character.debutYear} onChange={(e) => setCharacter({...character, debutYear: e.target.value})}/>
+<input value={debut.debutYear} onChange={(e) => setDebut({...debut, debutYear: e.target.value})}/>
 <br /><br />
 ```
 
-When we do something like `onChange={(e) => setCharacter({...character, debutFilm: e.target.value})}`, each key stroke is temporarily saved into it's state variable. It make it easy to keep track of what the user is typing in at all times.
+When we do something like `onChange={(e) => setDebut({...debut, debutFilm: e.target.value})}`, each key stroke is temporarily saved into it's state variable. It make it easy to keep track of what the user is typing in at all times.
 
 Before we make sure that it works, let's add a route to this component and test our ability to render the form itself.
 
@@ -953,13 +953,13 @@ Before we make sure that it works, let's add a route to this component and test 
 Here is the import:
 
 ```jsx
-import CreateCharacter from "./CreateCharacter";
+import CreateDebut from "./CreateDebut";
 ```
 
 Here is the defined route:
 
 ```jsx
-<Route path="/mcu/create" element={<CreateCharacter />} />
+<Route path="/debuts/create" element={<CreateDebut />} />
 ```
 
 Now let's make a link to this so users can easily reach it
@@ -968,28 +968,28 @@ Now let's make a link to this so users can easily reach it
 
 ```jsx
 <li>
-  <Link to="/mcu/create">Create a new MCU character</Link>
+  <Link to="/debuts/create">Enter a new MCU debut</Link>
 </li>
 ```
 
-Now test it! Click the "Create a new MCU character" link and see that the form shows up.
+Now test it! Click the "Enter a new MCU debut" link and see that the form shows up.
 
 The next thing we should do is create a function that makes a POST request to our server and send the form data to the database.
 
-86. Import the API URL at the top of `CreateCharacter.js`:
+86. Import the API URL at the top of `CreateDebut.js`:
 
 ```jsx
 import { API_URL } from "./constants";
 ```
 
-87. In `CreateCharacter.js` above the return statement, create an async function that will post to the database:
+87. In `CreateDebut.js` above the return statement, create an async function that will post to the database:
 
 ```jsx
-async function postCharacter() {
+async function postDebut() {
   try {
-    const response = await fetch(`${API_URL}/createOneCharacter`, {
+    const response = await fetch(`${API_URL}/createOneDebut`, {
       method: "post",
-      body: JSON.stringify(character),
+      body: JSON.stringify(debut),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -997,8 +997,8 @@ async function postCharacter() {
       },
     });
 
-    setCharacter({
-      name: "",
+    setDebut({
+      characterName: "",
       debutFilm: "",
       debutYear: 0,
     });
@@ -1011,9 +1011,9 @@ async function postCharacter() {
 }
 ```
 
-The first thing that happens in this function is creating the character object based on the state variables.
+The first thing that happens in this function is creating the debut object based on the state variables.
 
-The next thing is that we're performing a fetch request to the back end. The URL to the back end is imported, for security reasons. The second argument to the fetch function is an object with metadata about the request. Here is where we specify that it's a POST request, we are turning the character object into JSON, and the `headers` object is so that we avoid any CORS issues. This is very important for when this project gets deployed.
+The next thing is that we're performing a fetch request to the back end. The URL to the back end is imported, for security reasons. The second argument to the fetch function is an object with metadata about the request. Here is where we specify that it's a POST request, we are turning the debut object into JSON, and the `headers` object is so that we avoid any CORS issues. This is very important for when this project gets deployed.
 
 Once we get a response, right now we're just console logging that response so that we see if the request works out or not.
 
@@ -1021,13 +1021,13 @@ Finally, we're resetting all state variables. This will also clear out the form.
 
 The next thing we should do is make sure this function runs when the form is submitted.
 
-88. Create a function called `handleOnSubmit` where we prevent the form from refreshing the page, and we run the `postCharacter()` function:
+88. Create a function called `handleOnSubmit` where we prevent the form from refreshing the page, and we run the `postDebut()` function:
 
 ```jsx
 function handleOnSubmit(event) {
   event.preventDefault();
 
-  postCharacter();
+  postDebut();
 }
 ```
 
@@ -1054,13 +1054,13 @@ function handleOnSubmit(event) {
 </form>
 ```
 
-Now that we have a button that will submit the form, which will prevent the refresh and run the `postCharacter()` function, and the new character should be written to the database.
+Now that we have a button that will submit the form, which will prevent the refresh and run the `postDebut()` function, and the new debut should be written to the database.
 
-Test this!! Fill out the form, click the button, you should see the form fields become empty and you should also see the character in the console. Additionally, when you check with MongoDB Compass, you should see the new character in the `mcus` collection.
+Test this!! Fill out the form, click the button, you should see the form fields become empty and you should also see the debut in the console. Additionally, when you check with MongoDB Compass, you should see the new debut in the `debuts` collection.
 
-Now let's modify this to go to a different page once you've created a character.
+Now let's modify this to go to a different page once you've created a debut.
 
-90. At the top of `CreateCharacter.js`, import `useNavigate`:
+90. At the top of `CreateDebut.js`, import `useNavigate`:
 
 ```jsx
 import { useNavigate } from "react-router-dom";
@@ -1074,33 +1074,33 @@ This is a custom hook from `react-router-dom` that allows you to navigate to a d
 const navigate = useNavigate();
 ```
 
-92. Inside the `.then()` in the `postCharacter()` function, replace the console log with `navigate` and use it to see all the characters:
+92. Inside the `.then()` in the `postDebut()` function, replace the console log with `navigate` and use it to see all the debuts:
 
 ```jsx
-navigate("/mcu");
+navigate("/debuts");
 ```
 
-Overall, your `CreateCharacter.js` should look like this:
+Overall, your `CreateDebut.js` should look like this:
 
 ```jsx
 import React, { useState } from "react";
 import { API_URL } from "./constants";
 import { useNavigate } from "react-router-dom";
 
-function CreateCharacter() {
+function CreateDebut() {
   const navigate = useNavigate();
 
-  const [character, setCharacter] = useState({
-    name: "",
+  const [debut, setDebut] = useState({
+    characterName: "",
     debutFilm: "",
     debutYear: 0,
   });
 
-  async function postCharacter() {
+  async function postDebut() {
     try {
-      const response = await fetch(`${API_URL}/createOneCharacter`, {
+      const response = await fetch(`${API_URL}/createOneDebut`, {
         method: "post",
-        body: JSON.stringify(character),
+        body: JSON.stringify(debut),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -1108,15 +1108,15 @@ function CreateCharacter() {
         },
       });
 
-      setCharacter({
-        name: "",
+      setDebut({
+        characterName: "",
         debutFilm: "",
         debutYear: 0,
       });
 
       const serverResponse = await response.json();
       console.log(serverResponse);
-      navigate('/mcu')
+      navigate('/debuts')
     } catch (e) {
       console.log(e);
     }
@@ -1124,63 +1124,63 @@ function CreateCharacter() {
 
   function handleOnSubmit(event) {
     event.preventDefault();
-    postCharacter();
+    postDebut();
   }
 
   return (
     <form onSubmit={(e) => handleOnSubmit(e)}>
       <label>Name</label>
       <input
-        value={character.name}
-        onChange={(e) => setCharacter({ ...character, name: e.target.value })}
+        value={debut.characterName}
+        onChange={(e) => setDebut({ ...debut, characterName: e.target.value })}
       />
       <br />
       <br />
       <label>DebutFilm</label>
       <input
-        value={character.debutFilm}
+        value={debut.debutFilm}
         onChange={(e) =>
-          setCharacter({ ...character, debutFilm: e.target.value })
+          setDebut({ ...debut, debutFilm: e.target.value })
         }
       />
       <br />
       <br />
       <label>DebutYear</label>
       <input
-        value={character.debutYear}
+        value={debut.debutYear}
         onChange={(e) =>
-          setCharacter({ ...character, debutYear: e.target.value })
+          setDebut({ ...debut, debutYear: e.target.value })
         }
       />
       <br />
       <br />
 
-      <button type="submit">Submit new character</button>
+      <button type="submit">Submit new debut</button>
     </form>
   );
 }
 
-export default CreateCharacter;
+export default CreateDebut;
 ```
 
-Test it by adding a new character! When you're done submitting, you should notice that it takes you to see all the characters, and the new character should be listed at the bottom.
+Test it by adding a new debut! When you're done submitting, you should notice that it takes you to see all the debuts, and the new debut should be listed at the bottom.
 
-Now that we have half of CRUD functionality completed, let's create a component that will render all the information about one character at a time.
+Now that we have half of CRUD functionality completed, let's create a component that will render all the information about one debut at a time.
 
-93. In the `src` folder, create a file called `OneCharacter.js`
+93. In the `src` folder, create a file called `OneDebut.js`
 
-94. At the top of `OneCharacter.js`, import `useParams`:
+94. At the top of `OneDebut.js`, import `useParams`:
 
 ```jsx
 import { useParams } from "react-router-dom";
 ```
 
-This is so that we can pass a character name via the URL and use it to get back only that character's information
+This is so that we can pass a debut name via the URL and use it to get back only that debut's information
 
 95. Create a functional component that returns just a `div` or fragment (`<>`) with an `h1` in it, for now.
 
 ```jsx
-function OneCharacter() {
+function OneDebut() {
   return (
     <>
       <h1></h1>
@@ -1188,7 +1188,7 @@ function OneCharacter() {
   );
 }
 
-export default OneCharacter;
+export default OneDebut;
 ```
 
 96. Inside the functional component, use `useParams` to capture the name:
@@ -1200,52 +1200,52 @@ const { name } = useParams();
 97. Inside the `<h1>` tag, plug in this parameter:
 
 ```jsx
-<h1>The character {name} debuted in the film ...</h1>
+<h1>The debut {name} debuted in the film ...</h1>
 ```
 
 We will come back and complete this file later. For now, let's just create a route to it.
 
-98. In `App.js`, import and add a route to the `OneCharacter` component:
+98. In `App.js`, import and add a route to the `OneDebut` component:
 
 Here is the import:
 
 ```jsx
-import OneCharacter from "./OneCharacter";
+import OneDebut from "./OneDebut";
 ```
 
 Here is the defined route:
 
 ```jsx
-<Route path="/mcu/:name" element={<OneCharacter />} />
+<Route path="/debuts/:name" element={<OneDebut />} />
 ```
 
-Now we can render the component. For example, if you go to `localhost:3000/mcu/Captain%20America`, you should see the component with "Captain America" in the title
+Now we can render the component. For example, if you go to `localhost:3000/debuts/Captain%20America`, you should see the component with "Captain America" in the title
 
-Let's make a small change to the `CreateCharacter` component so that it goes to this component.
+Let's make a small change to the `CreateDebut` component so that it goes to this component.
 
-99. In `CreateCharacter.js`, update the `navigate` function:
+99. In `CreateDebut.js`, update the `navigate` function:
 
 ```jsx
-navigate(`/mcu/${serverResponse.payload.name}`);
+navigate(`/debuts/${serverResponse.payload.characterName}`);
 ```
 
-Now when you create a character, it will go to that component based on the name of the character, which is used as a dynamic parameter. We should go to the server-side now and add the ability to get back one character's full information to be displayed on the `OneCharacter` component
+Now when you create a debut, it will go to that component based on the name of the debut, which is used as a dynamic parameter. We should go to the server-side now and add the ability to get back one debut's full information to be displayed on the `OneDebut` component
 
-## Server-side feature: getCharacterByName
+## Server-side feature: getDebutByName
 
-100. In `mcuController.js`, write a function called `getCharacterByName` which will return with the character's document.
+100. In `debutsController.js`, write a function called `getDebutByName` which will return with the debut's document.
 
 ```js
-async function getCharacterByName(req, res) {
+async function getDebutByName(req, res) {
   try {
-    let foundCharacter = await Mcu.findOne({ name: req.params.name });
+    let foundDebut = await Debut.findOne({ characterName: req.params.name });
     res.json({
       message: "success",
-      payload: foundCharacter,
+      payload: foundDebut,
     });
   } catch (error) {
     let errorObj = {
-      message: "getCharacterByName failure",
+      message: "getDebutByName failure",
       payload: error,
     };
 
@@ -1259,36 +1259,36 @@ async function getCharacterByName(req, res) {
 
 ```js
 module.exports = {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
 };
 ```
 
-102. In `mcuRouter.js`, import this function:
+102. In `debutsRouter.js`, import this function:
 
 ```js
 const {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
-} = require("../controller/mcuController");
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
+} = require("../controller/debutsController");
 ```
 
 103. Now set the route using a dynamic parameter:
 
 ```js
-// localhost:3001/api/getCharacterByName/:name
-router.get("/getCharacterByName/:name", getCharacterByName);
+// localhost:3001/api/getDebutByName/:name
+router.get("/getDebutByName/:name", getDebutByName);
 ```
 
 Make sure to test this route using Postman!!!!
 
 Once it's tested and it's working, it's time to set this up for the front-end
 
-## Client-side feature: OneCharacter component
+## Client-side feature: OneDebut component
 
-104. In `OneCharacter.js`, import `useEffect` and `useState` at the top. Let's also bring in the `API_URL` that we need to contact our back-end server with:
+104. In `OneDebut.js`, import `useEffect` and `useState` at the top. Let's also bring in the `API_URL` that we need to contact our back-end server with:
 
 ```jsx
 import { useState, useEffect } from "react";
@@ -1298,7 +1298,7 @@ import { API_URL } from "./constants";
 105. Set up state variables to hold the debut film and debut year:
 
 ```jsx
-const [character, setCharacter] = useState({
+const [debut, setDebut] = useState({
   debutFilm: "",
   debutYear: "",
 });
@@ -1310,8 +1310,8 @@ By default these values are empty, but it will be filled after we make a fetch c
 
 ```jsx
 useEffect(() => {
-  async function getCharacter() {
-    const response = await fetch(`${API_URL}/getCharacterByName/${name}`, {
+  async function getDebut() {
+    const response = await fetch(`${API_URL}/getDebutByName/${name}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -1320,45 +1320,45 @@ useEffect(() => {
     })
 
     const data = await response.json();
-    setCharacter(data.payload);
+    setDebut(data.payload);
   }
 
-  getCharacter();
+  getDebut();
 }, [name]);
 ```
 
 This will run once state variable `name` changes, which is based on the dynamic parameter.
 
-107. Update the `<h1>` tag to use `character.name`:
+107. Update the `<h1>` tag to use `debut.characterName`:
 
 ```js
-<h1>{character.name}</h1>
+<h1>{debut.characterName}</h1>
 ```
 
-This way, when we try to go to `localhost:3000/mcu/Hulk` for example, the text that displays is based on the response from the database instead of the dynamic parameter. If you see "Hulk" show up, that means the character's entire document is being captured on the front-end.
+This way, when we try to go to `localhost:3000/debuts/Hulk` for example, the text that displays is based on the response from the database instead of the dynamic parameter. If you see "Hulk" show up, that means the debut's entire document is being captured on the front-end.
 
 108. Display the movie and year under the `<h1>` tag:
 
 ```jsx
-<p>Debuted in <span>{character.debutFilm}</span></p>
-<p>Released in the year <span>{character.debutYear}</span></p>
+<p>Debuted in <span>{debut.debutFilm}</span></p>
+<p>Released in the year <span>{debut.debutYear}</span></p>
 ```
 
-Now that it works, let's make sure the list of all characters are also links to their own page.
+Now that it works, let's make sure the list of all debuts are also links to their own page.
 
-109. At the top of `AllCharacters.js`, import `Link`:
+109. At the top of `AllDebuts.js`, import `Link`:
 
 ```jsx
 import { Link } from "react-router-dom";
 ```
 
-110. Inside of the map function where we are producing `<li>` tags with the character names, update them to link to the `OneCharacter` component:
+110. Inside of the map function where we are producing `<li>` tags with the debut names, update them to link to the `OneDebut` component:
 
 ```jsx
-<Link to={`/mcu/${character.name}`}>{character.name}</Link>
+<Link to={`/debuts/${debut.characterName}`}>{debut.characterName}</Link>
 ```
 
-Your `AllCharacters.js` page should now look like this:
+Your `AllDebuts.js` page should now look like this:
 
 ```jsx
 import React, { useState, useEffect } from "react";
@@ -1366,13 +1366,13 @@ import { Link } from "react-router-dom";
 import { API_URL } from "./constants";
 import axios from "axios";
 
-function AllCharacters() {
+function AllDebuts() {
   const [serverData, setServerData] = useState([]);
 
   useEffect(() => {
-    async function getCharacters() {
+    async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allCharacters`);
+        const res = await axios.get(`${API_URL}/allDebuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -1380,15 +1380,15 @@ function AllCharacters() {
       }
     }
 
-    getCharacters();
+    getDebuts();
   }, []);
 
   return (
     <ul>
       {serverData.length > 0 ? (
-        serverData.map((character) => (
-          <li key={character._id}>
-            <Link to={`/mcu/${character.name}`}>{character.name}</Link>
+        serverData.map((debut) => (
+          <li key={debut._id}>
+            <Link to={`/debuts/${debut.characterName}`}>{debut.characterName}</Link>
           </li>
         ))
       ) : (
@@ -1398,28 +1398,28 @@ function AllCharacters() {
   );
 }
 
-export default AllCharacters;
+export default AllDebuts;
 ```
 
-Your `OneCharacter.js` should currently look like this:
+Your `OneDebut.js` should currently look like this:
 
 ```jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_URL } from "./constants";
 
-function OneCharacter() {
+function OneDebut() {
   const { name } = useParams();
   const navigate = useNavigate();
 
-  const [character, setCharacter] = useState({
+  const [debut, setDebut] = useState({
     debut: "",
     debutYear: "",
   });
 
   useEffect(() => {
-    async function getCharacter() {
-      const response = await fetch(`${API_URL}/getCharacterByName/${name}`, {
+    async function getDebut() {
+      const response = await fetch(`${API_URL}/getDebutByName/${name}`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -1428,33 +1428,33 @@ function OneCharacter() {
       })
 
       const data = await response.json();
-      setCharacter(data.payload);
+      setDebut(data.payload);
     }
 
-    getCharacter();
+    getDebut();
   }, [name]);
 
   return (
     <>
-      <h1>{character.name}</h1>
+      <h1>{debut.characterName}</h1>
       <ul>
         <li>
           Debuted in&nbsp;
-          <span>{character.debutFilm}</span>
+          <span>{debut.debutFilm}</span>
         </li>
         <li>
           Released in&nbsp;
-          <span>{character.debutYear}</span>
+          <span>{debut.debutYear}</span>
         </li>
       </ul>
     </>
   );
 }
 
-export default OneCharacter;
+export default OneDebut;
 ```
 
-Now we have an application where we can add MCU characters, and know what film they debuted in and the year it was released. Users have a decent UI where they can navigate around. The next thing to do is to create the ability to update a character, or delete a character.
+Now we have an application where we can add MCU debuts, and know what film they debuted in and the year it was released. Users have a decent UI where they can navigate around. The next thing to do is to create the ability to update a debut, or delete a debut.
 
 ## U/CRUD - Server-side Update functionality
 
@@ -1462,40 +1462,40 @@ As usual, to give another functionality to the user, we should start with the ba
 
 The 2 files we're going to look at are:
 
-- `mcuController.js`
-- `mcuRouter.js`
+- `debutsController.js`
+- `debutsRouter.js`
 
-111. In `mcuController.js`, create a function called `updateCharacter`:
+111. In `debutsController.js`, create a function called `updateDebut`:
 
 ```js
-async function updateCharacter(req, res) {
+async function updateDebut(req, res) {
   try {
-    let targetCharacter = await Mcu.findOne({ _id: req.params.id });
+    let targetDebut = await Debut.findOne({ _id: req.params.id });
 
-    let updatedCharacter = {
-      _id: targetCharacter._id,
-      name: targetCharacter.name,
+    let updatedDebut = {
+      _id: targetDebut._id,
+      characterName: targetDebut.name,
       debutFilm: req.body.debutFilm
         ? req.body.debutFilm
-        : targetCharacter.debutFilm,
+        : targetDebut.debutFilm,
       debutYear: req.body.debutYear
         ? req.body.debutYear
-        : targetCharacter.debutYear,
+        : targetDebut.debutYear,
     };
 
-    await Mcu.updateOne(
+    await Debut.updateOne(
       { _id: req.params.id },
-      { $set: updatedCharacter },
+      { $set: updatedDebut },
       { upsert: true }
     );
 
     res.json({
       message: "success",
-      payload: updatedCharacter,
+      payload: updatedDebut,
     });
   } catch (e) {
     let errorObj = {
-      message: "updateCharacter failure",
+      message: "updateDebut failure",
       payload: error,
     };
 
@@ -1505,40 +1505,40 @@ async function updateCharacter(req, res) {
 }
 ```
 
-Here we're targeting the correct character using the unique `_id` that exists in MongoDB. This is best practice, as it is the safest & most accurate way to do it. Then, we create a new character object where we keep the original id and name, but we can change the film & year they debuted. Finally, we contact the database and update the character before responding with a success message.
+Here we're targeting the correct debut using the unique `_id` that exists in MongoDB. This is best practice, as it is the safest & most accurate way to do it. Then, we create a new debut object where we keep the original id and name, but we can change the film & year they debuted. Finally, we contact the database and update the debut before responding with a success message.
 
 112. Make sure to export this function at the bottom:
 
 ```js
 module.exports = {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
-  updateCharacter,
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
+  updateDebut,
 };
 ```
 
-113. In `mcuRouter.js`, import the function we just wrote and create a route for it.
+113. In `debutsRouter.js`, import the function we just wrote and create a route for it.
 
 Here is the import:
 
 ```js
 const {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
-  updateCharacter,
-} = require("../controller/mcuController");
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
+  updateDebut,
+} = require("../controller/debutsController");
 ```
 
 Here is the route:
 
 ```js
-// localhost:3001/api/updateCharacter/:id
-router.put("/updateCharacter/:id", updateCharacter);
+// localhost:3001/api/updateDebut/:id
+router.put("/updateDebut/:id", updateDebut);
 ```
 
-Make sure to test it with Postman by making the PUT request to `localhost:3001/api/updateCharacter/:id`. You will need to have Mongo Compass open to grab the `_id` of a character in order to target it properly. Also make sure that the properties `debut` and `debutYear` are in the body of the request.
+Make sure to test it with Postman by making the PUT request to `localhost:3001/api/updateDebut/:id`. You will need to have Mongo Compass open to grab the `_id` of a debut in order to target it properly. Also make sure that the properties `debut` and `debutYear` are in the body of the request.
 
 Once it works, let's move on to the front-end so that a user can use this update functionality.
 
@@ -1546,26 +1546,26 @@ Once it works, let's move on to the front-end so that a user can use this update
 
 Before we write any code, let's plan out how this is going to work from the user side.
 
-- The user will be on the `OneCharacter` page
+- The user will be on the `OneDebut` page
 - The user will click on a `edit details` button
-- The character's details (debut and debutYear) will change from being text, to being input fields
+- The debut's details (debut and debutYear) will change from being text, to being input fields
 - The user will change the text within the input fields
 - The user will click a `save` button
 - This will trigger a PUT request to our server
 - When the database is updated, it will return with the new data
-- The input fields will change back into being text, with the new character data
+- The input fields will change back into being text, with the new debut data
 
-These changes will all happen on the `OneCharacter` component
+These changes will all happen on the `OneDebut` component
 
-113. In `OneCharacter.js`, write a state variable called `isEditing`:
+113. In `OneDebut.js`, write a state variable called `isEditing`:
 
 ```jsx
 const [isEditing, setIsEditing] = useState(false);
 ```
 
-The idea is that when this is set to false, the character details will be plain text. When it is set to true, it will be an input field.
+The idea is that when this is set to false, the debut details will be plain text. When it is set to true, it will be an input field.
 
-114. For `character.debut` and `character.debutYear`, write a ternary operator that will render either text or an input based on our state variable `isEditing`:
+114. For `debut.debutFilm` and `debut.debutYear`, write a ternary operator that will render either text or an input based on our state variable `isEditing`:
 
 ```jsx
 <p>
@@ -1573,9 +1573,9 @@ The idea is that when this is set to false, the character details will be plain 
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutFilm" value={character.debutFilm}/>
+                    <input type="text" name="debutFilm" value={debut.debutFilm}/>
                     :
-                    <span>{character.debutFilm}</span>
+                    <span>{debut.debutFilm}</span>
                 }
             </p>
             <p>
@@ -1583,9 +1583,9 @@ The idea is that when this is set to false, the character details will be plain 
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutYear" value={character.debutYear}/>
+                    <input type="text" name="debutYear" value={debut.debutYear}/>
                     :
-                    <span>{character.debutYear}</span>
+                    <span>{debut.debutYear}</span>
                 }
             </p>
 ```
@@ -1610,7 +1610,7 @@ Now let's create a button to use this function.
 
 ```jsx
 <button onClick={toggleEditing}>
-  {isEditing ? "Stop editing" : "Edit character details"}
+  {isEditing ? "Stop editing" : "Edit debut details"}
 </button>
 ```
 
@@ -1620,11 +1620,11 @@ Test this!
 
 Next we need to track what changes the user is making when typing into the input field.
 
-117. Write a function called `updateCharacter` that will change the values in our state variable `character` based on the input fields:
+117. Write a function called `updateDebut` that will change the values in our state variable `debut` based on the input fields:
 
 ```jsx
-function updateCharacter({ target }) {
-  setCharacter((prevState) => ({
+function updateDebut({ target }) {
+  setDebut((prevState) => ({
     ...prevState,
     [target.name]: target.value, //dynamically inject property
   }));
@@ -1634,22 +1634,22 @@ function updateCharacter({ target }) {
 There are a lot of things happening here, so let's walk through it first.
 
 - The parameters that this function takes will be the input field itself, which is why it's wrapped in `{}` curly brackets. The HTML attributes such as `name` and `value` become properties of this object in JS.
-- In any state variable, the `setState` function can take a callback function to make use of it's previous state. In this case, `setCharacter` is making use of it's previous state which is an object that holds the `debutFilm` and `debutYear` properties.
+- In any state variable, the `setState` function can take a callback function to make use of it's previous state. In this case, `setDebut` is making use of it's previous state which is an object that holds the `debutFilm` and `debutYear` properties.
 - We use a spread operator to set the state variable to the values it already has, but then we redefine one of the properties with `target.name` and `target.value`. Remember that `target.name` will either be `debutFilm` or `debutYear`, depending on the input field that is currently being typed into. `target.value` will be the value of the input field itself.
 
-For example, let's say we're at `localhost:3000/mcu/Hulk` and we are editing the character details. The `setCharacter` function basically looks like this:
+For example, let's say we're at `localhost:3000/debuts/Hulk` and we are editing the debut details. The `setDebut` function basically looks like this:
 
 ```jsx
-setCharacter({
+setDebut({
   debut: "The Avengers",
   debutYear: 2012,
 });
 ```
 
-If we type into the input field for `debut` and change the movie name to "Hulk", then the `setCharacter` function is basically doing this:
+If we type into the input field for `debut` and change the movie name to "Hulk", then the `setDebut` function is basically doing this:
 
 ```jsx
-setCharacter({
+setDebut({
   debut: "Hulk",
   debutYear: 2012,
 });
@@ -1665,9 +1665,9 @@ This way, we can use this same function for both input fields.
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutFilm" value={character.debutFilm} onChange={updateCharacter}/>
+                    <input type="text" name="debutFilm" value={debut.debutFilm} onChange={updateDebut}/>
                     :
-                    <span>{character.debutFilm}</span>
+                    <span>{debut.debutFilm}</span>
                 }
             </p>
             <p>
@@ -1675,9 +1675,9 @@ This way, we can use this same function for both input fields.
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutYear" value={character.debutYear} onChange={updateCharacter}/>
+                    <input type="text" name="debutYear" value={debut.debutYear} onChange={updateDebut}/>
                     :
-                    <span>{character.debutYear}</span>
+                    <span>{debut.debutYear}</span>
                 }
             </p>
 ```
@@ -1690,9 +1690,9 @@ Now that it's connected, whenever a user is typing into these fields, the state 
 async function handleOnSubmit(e) {
   e.preventDefault();
   console.log("Submitted!");
-  await fetch(`${API_URL}/updateCharacter/${character._id}`, {
+  await fetch(`${API_URL}/updateDebut/${debut._id}`, {
     method: "put",
-    body: JSON.stringify(character),
+    body: JSON.stringify(debut),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -1708,7 +1708,7 @@ Again, there's a lot here so let's walk through what is happening
 
 - We are using `e.preventDefault();` because this function will be attached to a form, and we want to prevent refreshing the page
 - The console log is useful for knowing when this function runs
-- We are sending `debutFilm` and `debutYear` as the body of this request, so we are grabbing those values from our state variable `character`
+- We are sending `debutFilm` and `debutYear` as the body of this request, so we are grabbing those values from our state variable `debut`
 - We perform a `fetch` to our server, and, when that network call is done, we set `isEditing` to false so that the input fields become plain text.
 
 120. Change the `useEffect` so that it runs either when `name` or `isEditing` changes:
@@ -1746,11 +1746,11 @@ return (
           <input
             type="text"
             name="debutFilm"
-            value={character.debutFilm}
-            onChange={updateCharacter}
+            value={debut.debutFilm}
+            onChange={updateDebut}
           />
         ) : (
-          <span>{character.debutFilm}</span>
+          <span>{debut.debutFilm}</span>
         )}
       </p>
       <p>
@@ -1759,11 +1759,11 @@ return (
           <input
             type="text"
             name="debutYear"
-            value={character.debutYear}
-            onChange={updateCharacter}
+            value={debut.debutYear}
+            onChange={updateDebut}
           />
         ) : (
-          <span>{character.debutYear}</span>
+          <span>{debut.debutYear}</span>
         )}
       </p>
       {isEditing ? <button type="submit">Save Changes</button> : <br />}
@@ -1772,14 +1772,14 @@ return (
       {isEditing ? (
         <span>Discard Changes</span>
       ) : (
-        <span>Edit Character Details</span>
+        <span>Edit Debut Details</span>
       )}
     </button>
   </>
 );
 ```
 
-Now we can finally test this on the front end!! When you edit a character's details, make sure to check with Mongo Compass that the database is properly being updated.
+Now we can finally test this on the front end!! When you edit a debut's details, make sure to check with Mongo Compass that the database is properly being updated.
 
 We have the `C`reate, `R`ead, and `U`pdate parts of `CRUD`. The final function to add to this is the `D`elete functionality.
 
@@ -1787,25 +1787,25 @@ We have the `C`reate, `R`ead, and `U`pdate parts of `CRUD`. The final function t
 
 The 2 files we're going to look at are:
 
-- `mcuController.js`
-- `mcuRouter.js`
+- `debutsController.js`
+- `debutsRouter.js`
 
-123. In `mcuController.js`, write a function called `deleteCharacter` that will contact the database and delete a character based on their `_id`:
+123. In `debutsController.js`, write a function called `deleteDebut` that will contact the database and delete a debut based on their `_id`:
 
 ```js
-async function deleteCharacter(req, res) {
+async function deleteDebut(req, res) {
   try {
-    let targetCharacter = req.params.id;
+    let targetDebut = req.params.id;
 
-    let deletedCharacter = await Mcu.deleteOne({ _id: targetCharacter });
+    let deletedDebut = await Debut.deleteOne({ _id: targetDebut });
 
     res.json({
       message: "success",
-      payload: deletedCharacter,
+      payload: deletedDebut,
     });
   } catch (error) {
     let errorObj = {
-      message: "deleteCharacter failure",
+      message: "deleteDebut failure",
       payload: error,
     };
 
@@ -1819,39 +1819,39 @@ async function deleteCharacter(req, res) {
 
 ```js
 module.exports = {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
-  updateCharacter,
-  deleteCharacter,
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
+  updateDebut,
+  deleteDebut,
 };
 ```
 
-125. In `mcuRouter.js`, import the function we just wrote:
+125. In `debutsRouter.js`, import the function we just wrote:
 
 ```js
 const {
-  getAllCharacters,
-  createCharacter,
-  getCharacterByName,
-  updateCharacter,
-  deleteCharacter,
-} = require("../controller/mcuController");
+  getAllDebuts,
+  createDebut,
+  getDebutByName,
+  updateDebut,
+  deleteDebut,
+} = require("../controller/debutsController");
 ```
 
 126. Define the route for this function:
 
 ```js
-router.delete("/deleteCharacter/:id", deleteCharacter);
+router.delete("/deleteDebut/:id", deleteDebut);
 ```
 
-Now test it with Postman by grabbing the `_id` of a character from Mongo Compass and making a DELETE request to `localhost:3001/api/deleteCharacter/:id`
+Now test it with Postman by grabbing the `_id` of a debut from Mongo Compass and making a DELETE request to `localhost:3001/api/deleteDebut/:id`
 
 Once it works, let's make it work on the front end
 
 ## D/CRUD - Client-side Delete Functionality
 
-In `OneCharacter.js`, we want the delete to redirect a user back to the list of all characters, so we can see that it's disappeared from the dataset. First let's import `useNavigate` to accomplish this:
+In `OneDebut.js`, we want the delete to redirect a user back to the list of all debuts, so we can see that it's disappeared from the dataset. First let's import `useNavigate` to accomplish this:
 
 `import { useParams, useNavigate } from 'react-router-dom'`
 
@@ -1859,11 +1859,11 @@ And make sure to set it up within the functional component:
 
 `const navigate = useNavigate()`
 
-126. In `OneCharacter.js`, write a function called `handleDelete` that will make a fetch request to our server and respond by navigating back to the component that renders all characters:
+126. In `OneDebut.js`, write a function called `handleDelete` that will make a fetch request to our server and respond by navigating back to the component that renders all debuts:
 
 ```jsx
 async function handleDelete() {
-  await fetch(`${API_URL}/deleteCharacter/${character._id}`, {
+  await fetch(`${API_URL}/deleteDebut/${debut._id}`, {
     method: "delete",
     headers: {
       Accept: "application/json",
@@ -1872,31 +1872,31 @@ async function handleDelete() {
     },
   });
 
-  navigate("/mcu");
+  navigate("/debuts");
 }
 ```
 
 127. Directly under the edit button, write a button that will run this function when clicked:
 
 ```jsx
-<button onClick={handleDelete}>Delete this character</button>
+<button onClick={handleDelete}>Delete this debut</button>
 ```
 
 Test it!!
 
-Here is what the full `OneCharacter.js` should look like:
+Here is what the full `OneDebut.js` should look like:
 
 ```jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_URL } from "./constants";
 
-function OneCharacter() {
+function OneDebut() {
   const navigate = useNavigate();
 
   const { name } = useParams();
 
-  const [character, setCharacter] = useState({
+  const [debut, setDebut] = useState({
     debutFilm: "",
     debutYear: 0,
   });
@@ -1905,7 +1905,7 @@ function OneCharacter() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/oneMcu/${name}`, {
+    fetch(`${API_URL}/oneDebut/${name}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -1913,11 +1913,11 @@ function OneCharacter() {
       },
     }).then(async (res) => {
       let result = await res.json();
-      setCharacter(result.payload);
+      setDebut(result.payload);
     });
   }, [name, isEditing]);
 
-  // we can see info about one character.
+  // we can see info about one debut.
   // On the backend, we have a route that will accept an object that looks like:
   // {
   //     debutFilm: "Hawkeye",
@@ -1935,7 +1935,7 @@ function OneCharacter() {
   //  A - Let users actually type into the input field && KEEP TRACK OF IT (will need it when I send the values to my DB)
   //  B - Use the same function to handle both
   // 3. When the user is ready to submit the form, they click a button, and can read the NEW VALUES
-  //  A - Need a function to handle form submission - should send state variable `character` to the backend route
+  //  A - Need a function to handle form submission - should send state variable `debut` to the backend route
   //  B - surround the input fields in a form, give it a button that runs the `handleOnSubmit`
   //  C - Some sort of behavior to confirm to the user that changes have been made
   //  D - Clean up a bug that keeps the old values, despite clicking "Discard changes"
@@ -1947,39 +1947,39 @@ function OneCharacter() {
 
   // 2A - REDUNDANT
   // function updateDebutFilm(val){
-  //     setCharacter((previousValue) => {
+  //     setDebut((previousValue) => {
   //         return {
   //             ...previousValue,
   //             debutFilm: val
   //         }
   //     })
-  //     console.log(character.debutFilm)
+  //     console.log(debut.debutFilm)
   // }
 
   // 2A - REDUNDANT
   // function updateDebutYear(val){
-  //     setCharacter((previousValue) => {
+  //     setDebut((previousValue) => {
   //         return {
   //             ...previousValue,
   //             debutYear: val
   //         }
   //     })
-  //     console.log(character.debutYear)
+  //     console.log(debut.debutYear)
   // }
 
   // 2B
-  function updateCharacter(event) {
+  function updateDebut(event) {
     // I'm gonna send in the event, which is {}
     // One of the properties of the {} is target
     // target is the element - any attribute on this element is a property of target
-    setCharacter((previousValue) => {
+    setDebut((previousValue) => {
       return {
         ...previousValue,
         [event.target.name]: event.target.value,
       };
     });
 
-    console.log(character);
+    console.log(debut);
   }
 
   // 3A
@@ -1987,9 +1987,9 @@ function OneCharacter() {
     // prevents refreshing the page, which would cancel all operations
     e.preventDefault();
     console.log("Submitted!");
-    await fetch(`${API_URL}/updateCharacter/${character._id}`, {
+    await fetch(`${API_URL}/updateDebut/${debut._id}`, {
       method: "put",
-      body: JSON.stringify(character),
+      body: JSON.stringify(debut),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -2001,7 +2001,7 @@ function OneCharacter() {
 }
 
   async function handleDelete() {
-    await fetch(`${API_URL}/deleteCharacter/${character._id}`, {
+    await fetch(`${API_URL}/deleteDebut/${debut._id}`, {
       method: "delete",
       headers: {
         Accept: "application/json",
@@ -2010,7 +2010,7 @@ function OneCharacter() {
       },
     });
 
-    navigate("/mcu");
+    navigate("/debuts");
   }
 
   return (
@@ -2025,11 +2025,11 @@ function OneCharacter() {
             <input
               type="text"
               name="debutFilm"
-              value={character.debutFilm}
-              onChange={(e) => updateCharacter(e)}
+              value={debut.debutFilm}
+              onChange={(e) => updateDebut(e)}
             />
           ) : (
-            <span>{character.debutFilm}</span>
+            <span>{debut.debutFilm}</span>
           )}
         </p>
         <p>
@@ -2039,26 +2039,26 @@ function OneCharacter() {
             <input
               type="text"
               name="debutYear"
-              value={character.debutYear}
-              onChange={(e) => updateCharacter(e)}
+              value={debut.debutYear}
+              onChange={(e) => updateDebut(e)}
             />
           ) : (
-            <span>{character.debutYear}</span>
+            <span>{debut.debutYear}</span>
           )}
         </p>
         {isEditing ? <button type="submit">Save Changes</button> : <br />}
       </form>
       {/* 1C */}
       <button onClick={toggleIsEditing}>
-        {isEditing ? "Discard changes" : "Edit Character Details"}
+        {isEditing ? "Discard changes" : "Edit Debut Details"}
       </button>
       <br />
-      <button onClick={handleDelete}>ONE CLICK DELETE THIS CHARACTER</button>
+      <button onClick={handleDelete}>ONE CLICK DELETE THIS DEBUT</button>
     </>
   );
 }
 
-export default OneCharacter;
+export default OneDebut;
 ```
 
 Now that it works, **CONGRATULATIONS!!** You've completed a MERN-stack application with full CRUD capabilities!!!
