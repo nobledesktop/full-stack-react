@@ -58,11 +58,11 @@ const axios = require("axios");
 
 ```js
 async function getMovieData(req, res) {
-  const fetchedData = await axios.get(
+  const apiResponse = await axios.get(
     "http://api.themoviedb.org/3/list/1?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb"
   );
 
-  res.json(fetchedData.data);
+  res.json(apiResponse.data);
 }
 ```
 
@@ -99,12 +99,12 @@ app.get("/api", getMovieData);
 19. Import `useState` and `useEffect`:
 
 ```jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 ```
 
 20. Below the import, make a functional component with an empty parens for a return statement. Name it `App`. Don't forget to export it.
 
-21. Place `<><div>This is the front-end</div></>` inside the empty return statement.
+21. Place `<div>This is the front end.</div>` inside the empty return statement.
 
 22. Use command `npm start` to test that the front-end is working. If you see the text "This is the front-end" that means it is!
 
@@ -169,19 +169,11 @@ Now you should at least see the data in the console of your browser
 31. On the client side, make sure to check if the `backendData.items` exists, to double check that the server side has returned with data. If it has, render each movie title:
 
 ```jsx
-{
-  backendData && backendData.length > 0 ? (
-    backendData.map((movie, index) => {
-      return (
-        <div key={index}>
-          <p>{movie.title}</p>
-        </div>
-      );
-    })
-  ) : (
-    <p>loading...</p>
-  );
-}
+{backendData.map((movie, index) => (
+  <div key={index}>
+    <p>{movie.title}</p>
+  </div>
+))}
 ```
 
 This is what the final `App.js` should look like:
@@ -205,20 +197,13 @@ useEffect(() => {
 }, []);
 
   return (
-    <>
-      <div>This is the front-end</div>
-      {backendData && backendData.length > 0 ? (
-        backendData.map((movie, index) => {
-          return (
-            <div key={index}>
-              <p>{movie.title}</p>
-            </div>
-          );
-        })
-      ) : (
-        <p>loading...</p>
-      )}
-    </>
+    <div>
+      {backendData.map((movie, index) => (
+        <div key={index}>
+          <p>{movie.title}</p>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -233,7 +218,7 @@ There are some variables that you may want hidden from the public, such as the U
 
 On the server-side, make sure to shut down the server using `crtl + c`
 
-Install the .env library in the terminal, using the command `npm install dotenv`
+Install the `dotenv` library in the terminal, using the command `npm install dotenv`
 
 32. In the root of the server folder, create a file called `.env` Create a variable for your port:
 
@@ -301,3 +286,5 @@ useEffect(() => {
   fetchData();
 }, []);
 ```
+
+39. Run `npm start` to see that the application is still working. Congrats! You've successfully connected the front-end and back-end of your application.
