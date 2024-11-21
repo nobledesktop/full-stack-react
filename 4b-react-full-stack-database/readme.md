@@ -973,24 +973,13 @@ import { API_URL } from "./constants";
 ```jsx
 async function postDebut() {
   try {
-    const response = await fetch(`${API_URL}/createOneDebut`, {
-      method: "post",
-      body: JSON.stringify(debut),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
+    await axios.post(`${API_URL}/createOneDebut`, debut);
 
     setDebut({
       characterName: "",
       film: "",
       year: 0,
     });
-
-    const serverResponse = await response.json();
-    console.log(serverResponse);
   } catch (e) {
     console.log(e);
   }
@@ -999,9 +988,7 @@ async function postDebut() {
 
 The first thing that happens in this function is creating the debut object based on the state variables.
 
-The next thing is that we're performing a fetch request to the back end. The URL to the back end is imported, for security reasons. The second argument to the fetch function is an object with metadata about the request. Here is where we specify that it's a POST request, we are turning the debut object into JSON, and the `headers` object is so that we avoid any CORS issues. This is very important for when this project gets deployed.
-
-Once we get a response, right now we're just console logging that response so that we see if the request works out or not.
+The next thing is that we're performing an HTTP request to the back end. The URL to the back end is imported, for security reasons. The second argument to the axios.post function is our request data.
 
 Finally, we're resetting all state variables. This will also clear out the form.
 
@@ -1084,15 +1071,7 @@ function CreateDebut() {
 
   async function postDebut() {
     try {
-      const response = await fetch(`${API_URL}/createOneDebut`, {
-        method: "post",
-        body: JSON.stringify(debut),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
+      await axios.post(`${API_URL}/createOneDebut`, debut);
 
       setDebut({
         characterName: "",
@@ -1100,8 +1079,6 @@ function CreateDebut() {
         year: 0,
       });
 
-      const serverResponse = await response.json();
-      console.log(serverResponse);
       navigate('/debuts')
     } catch (e) {
       console.log(e);
@@ -1290,23 +1267,15 @@ const [debut, setDebut] = useState({
 });
 ```
 
-By default these values are empty, but it will be filled after we make a fetch call inside of a `useEffect`
+By default these values are empty, but it will be filled after we make an axios call inside of a `useEffect`
 
-106. Write a `useEffect` that makes a fetch call to our database via the route we just created:
+106. Write a `useEffect` that makes an axios call to our database via the route we just created:
 
 ```jsx
 useEffect(() => {
   async function getDebut() {
-    const response = await fetch(`${API_URL}/getDebutByName/${name}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-
-    const data = await response.json();
-    setDebut(data.payload);
+    const response = await axios(`${API_URL}/getDebutByName/${name}`})
+    setDebut(response.data.payload);
   }
 
   getDebut();
@@ -1401,16 +1370,8 @@ function OneDebut() {
 
   useEffect(() => {
     async function getDebut() {
-      const response = await fetch(`${API_URL}/getDebutByName/${name}`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
-
-      const data = await response.json();
-      setDebut(data.payload);
+      const response = await axios(`${API_URL}/getDebutByName/${name}`)
+      setDebut(response.data.payload);
     }
 
     getDebut();
@@ -1672,16 +1633,7 @@ Now that it's connected, whenever a user is typing into these fields, the state 
 async function handleOnSubmit(e) {
   e.preventDefault();
   console.log("Submitted!");
-  await fetch(`${API_URL}/updateDebut/${debut._id}`, {
-    method: "put",
-    body: JSON.stringify(debut),
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  })
-
+  await axios.put(`${API_URL}/updateDebut/${debut._id}`, debut))
   setIsEditing(false);
 }
 ```
@@ -1691,7 +1643,7 @@ Again, there's a lot here so let's walk through what is happening
 - We are using `e.preventDefault();` because this function will be attached to a form, and we want to prevent refreshing the page
 - The console log is useful for knowing when this function runs
 - We are sending `film` and `year` as the body of this request, so we are grabbing those values from our state variable `debut`
-- We perform a `fetch` to our server, and, when that network call is done, we set `isEditing` to false so that the input fields become plain text.
+- We perform an HTTP request to our server, and, when that network call is done, we set `isEditing` to false so that the input fields become plain text.
 
 120. Change the `useEffect` so that it runs either when `name` or `isEditing` changes:
 
@@ -1841,19 +1793,11 @@ And make sure to set it up within the functional component:
 
 `const navigate = useNavigate()`
 
-126. In `OneDebut.js`, write a function called `handleDelete` that will make a fetch request to our server and respond by navigating back to the component that renders all debuts:
+126. In `OneDebut.js`, write a function called `handleDelete` that will make an HTTP request to our server and respond by navigating back to the component that renders all debuts:
 
 ```jsx
 async function handleDelete() {
-  await fetch(`${API_URL}/deleteDebut/${debut._id}`, {
-    method: "delete",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
-
+  await axios.delete(`${API_URL}/deleteDebut/${debut._id}`);
   navigate("/debuts");
 }
 ```
@@ -1887,16 +1831,12 @@ function OneDebut() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/oneDebut/${name}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    }).then(async (res) => {
-      let result = await res.json();
-      setDebut(result.payload);
-    });
+    async function getDebut() {
+      const response = await axios(`${API_URL}/oneDebut/${name}`) 
+      setDebut(response.data.payload);
+    }
+
+    getDebut();
   }, [name, isEditing]);
 
   // we can see info about one debut.
@@ -1968,30 +1908,12 @@ function OneDebut() {
   async function handleOnSubmit(e) {
     // prevents refreshing the page, which would cancel all operations
     e.preventDefault();
-    console.log("Submitted!");
-    await fetch(`${API_URL}/updateDebut/${debut._id}`, {
-      method: "put",
-      body: JSON.stringify(debut),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    })
-
-  setIsEditing(false);
+    await axios.put(`${API_URL}/updateDebut/${debut._id}`, debut)
+    setIsEditing(false);
 }
 
   async function handleDelete() {
-    await fetch(`${API_URL}/deleteDebut/${debut._id}`, {
-      method: "delete",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-
+    await axios.delete(`${API_URL}/deleteDebut/${debut._id}`);
     navigate("/debuts");
   }
 
