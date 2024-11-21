@@ -349,7 +349,7 @@ Make sure this goes directly underneath the Router imports. Again, The controlle
 
 ```js
 // localhost:3001/api/allDebuts
-router.get("/allDebuts", getAllDebuts);
+router.get("/", getAllDebuts);
 ```
 
 Finally, the last thing to do is to plug the router into our `index.js` file.
@@ -359,7 +359,7 @@ Finally, the last thing to do is to plug the router into our `index.js` file.
 ```js
 const debutsRouter = require("./routes/debutsRouter");
 // localhost:3001/api/.....
-app.use("/api", debutsRouter);
+app.use("/api/debuts", debutsRouter);
 ```
 
 As a reminder, here are how requests are handled throughout the server:
@@ -461,7 +461,7 @@ import axios from "axios";
 useEffect(() => {
   async function getDebuts() {
     try {
-      const res = await axios.get(`${API_URL}/allDebuts`);
+      const res = await axios.get(`${API_URL}/debuts`);
       console.log(res.data.payload);
       setServerData(res.data.payload);
     } catch (e) {
@@ -492,7 +492,7 @@ function App() {
   useEffect(() => {
     async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allDebuts`);
+        const res = await axios.get(`${API_URL}/debuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -576,7 +576,7 @@ These imports, as usual, belong on the top of the page.
 useEffect(() => {
   async function getDebuts() {
     try {
-      const res = await axios.get(`${API_URL}/allDebuts`);
+      const res = await axios.get(`${API_URL}/debuts`);
       console.log(res.data.payload);
       setServerData(res.data.payload);
     } catch (e) {
@@ -613,7 +613,7 @@ function AllDebuts() {
   useEffect(() => {
     async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allDebuts`);
+        const res = await axios.get(`${API_URL}/debuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -859,7 +859,7 @@ const {
 Here is the defined route:
 
 ```js
-router.post("/createOneDebut", createOneDebut);
+router.post("/", createOneDebut);
 ```
 
 77. Open up the Postman app, and make a POST request to `localhost:3001/Debut/createOneDebut`. Make sure that you open up the body tab, and type in JSON an object with debut details to test it. For example:
@@ -973,7 +973,7 @@ import { API_URL } from "./constants";
 ```jsx
 async function postDebut() {
   try {
-    await axios.post(`${API_URL}/createOneDebut`, debut);
+    await axios.post(`${API_URL}/debuts`, debut);
 
     setDebut({
       characterName: "",
@@ -1071,7 +1071,7 @@ function CreateDebut() {
 
   async function postDebut() {
     try {
-      await axios.post(`${API_URL}/createOneDebut`, debut);
+      await axios.post(`${API_URL}/debuts`, debut);
 
       setDebut({
         characterName: "",
@@ -1242,7 +1242,7 @@ const {
 
 ```js
 // localhost:3001/api/getDebutByName/:name
-router.get("/getDebutByName/:name", getDebutByName);
+router.get("/:name", getDebutByName);
 ```
 
 Make sure to test this route using Postman!!!!
@@ -1274,7 +1274,7 @@ By default these values are empty, but it will be filled after we make an axios 
 ```jsx
 useEffect(() => {
   async function getDebut() {
-    const response = await axios(`${API_URL}/getDebutByName/${name}`})
+    const response = await axios(`${API_URL}/debuts/${name}`})
     setDebut(response.data.payload);
   }
 
@@ -1327,7 +1327,7 @@ function AllDebuts() {
   useEffect(() => {
     async function getDebuts() {
       try {
-        const res = await axios.get(`${API_URL}/allDebuts`);
+        const res = await axios.get(`${API_URL}/debuts`);
         console.log(res.data.payload);
         setServerData(res.data.payload);
       } catch (e) {
@@ -1370,7 +1370,7 @@ function OneDebut() {
 
   useEffect(() => {
     async function getDebut() {
-      const response = await axios(`${API_URL}/getDebutByName/${name}`)
+      const response = await axios(`${API_URL}/debuts/${name}`)
       setDebut(response.data.payload);
     }
 
@@ -1478,7 +1478,7 @@ Here is the route:
 
 ```js
 // localhost:3001/api/updateDebut/:id
-router.put("/updateDebut/:id", updateDebut);
+router.put("/:id", updateDebut);
 ```
 
 Make sure to test it with Postman by making the PUT request to `localhost:3001/api/updateDebut/:id`. You will need to have Mongo Compass open to grab the `_id` of a debut in order to target it properly. Also make sure that the properties `debut` and `year` are in the body of the request.
@@ -1633,7 +1633,7 @@ Now that it's connected, whenever a user is typing into these fields, the state 
 async function handleOnSubmit(e) {
   e.preventDefault();
   console.log("Submitted!");
-  await axios.put(`${API_URL}/updateDebut/${debut._id}`, debut))
+  await axios.put(`${API_URL}/debuts/${debut._id}`, debut))
   setIsEditing(false);
 }
 ```
@@ -1776,7 +1776,7 @@ const {
 126. Define the route for this function:
 
 ```js
-router.delete("/deleteDebut/:id", deleteDebut);
+router.delete("/:id", deleteDebut);
 ```
 
 Now test it with Postman by grabbing the `_id` of a debut from Mongo Compass and making a DELETE request to `localhost:3001/api/deleteDebut/:id`
@@ -1797,7 +1797,7 @@ And make sure to set it up within the functional component:
 
 ```jsx
 async function handleDelete() {
-  await axios.delete(`${API_URL}/deleteDebut/${debut._id}`);
+  await axios.delete(`${API_URL}/debuts/${debut._id}`);
   navigate("/debuts");
 }
 ```
@@ -1832,7 +1832,7 @@ function OneDebut() {
 
   useEffect(() => {
     async function getDebut() {
-      const response = await axios(`${API_URL}/oneDebut/${name}`) 
+      const response = await axios(`${API_URL}/debuts/${name}`) 
       setDebut(response.data.payload);
     }
 
@@ -1908,12 +1908,12 @@ function OneDebut() {
   async function handleOnSubmit(e) {
     // prevents refreshing the page, which would cancel all operations
     e.preventDefault();
-    await axios.put(`${API_URL}/updateDebut/${debut._id}`, debut)
+    await axios.put(`${API_URL}/debuts/${debut._id}`, debut)
     setIsEditing(false);
 }
 
   async function handleDelete() {
-    await axios.delete(`${API_URL}/deleteDebut/${debut._id}`);
+    await axios.delete(`${API_URL}/debuts/${debut._id}`);
     navigate("/debuts");
   }
 
