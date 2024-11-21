@@ -256,9 +256,9 @@ const debutsSchema = new mongoose.Schema({
     required: true,
   },
 
-  film: String,,
+  film: String,
 
-  year: Number,,
+  year: Number,
 });
 
 const Debut = mongoose.model("Debut", debutsSchema);
@@ -394,7 +394,7 @@ We're going to be using `react-router-dom` to manage front-end URL changes
 44. Import useEffect and useState:
 
 ```jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 ```
 
 45. Create a functional component called App that returns an empty return parentheses. Overall it should look like this:
@@ -482,7 +482,7 @@ Once you save the file, check the console in the browser to see the data!
 Before we move on to the next step, take a look at what `App.js` should look like so far:
 
 ```jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { API_URL } from "./constants";
 import axios from "axios";
 
@@ -515,21 +515,17 @@ export default App;
 
 Now let's display the data on the page for the first time.
 
-56. Under the `<h1>`, let's write a turnary operator that will map over the state variable `serverData` if our axios call returns with the data:
+56. Under the `<h1>`, let's write a ternary operator that will map over the state variable `serverData` if our axios call returns with the data:
 
 ```jsx
 {
-  serverData.length > 0 ? (
-    serverData.map((debut) => {
-      return <li key={debut._id}>{debut.characterName}</li>;
-    })
-  ) : (
-    <h1>loading...</h1>
-  );
+  serverData.map((debut) => {
+    return <li key={debut._id}>{debut.characterName}</li>;
+  })
 }
 ```
 
-When the page initially loads, we will see this "loading screen" (the `<h1>`) first because `serverData` will initally be an empty array with a length of 0. Once the `useEffect` runs and axios returns with data from our database via the server, then `serverData` will have a length greater than 0 and it will be mapped over to render a list of debuts.
+Once the `useEffect` runs and axios returns with data from our database via the server, then `serverData` will be mapped over to render a list of debuts.
 
 Also note that the key property inside the `<li>` tag is being passed the debut's `_id` property from MongoDB. This is best practice because it will always be unique.
 
@@ -542,7 +538,7 @@ Now that our `App.js` is expanding, it's time to start separating our concerns. 
 58. In `AllDebuts.js` import `useState` and `useEffect`:
 
 ```jsx
-import React, { useState, useEffect } from `react`;
+import { useState, useEffect } from `react`;
 ```
 
 59. Create a functional component called "AllDebuts" that returns an empty parenthetical block. Don't forget to export it.
@@ -598,11 +594,7 @@ As we know, because of the empty `[]` as a second argument to `useEffect`, the a
 
 ```jsx
 {
-  serverData.length > 0 ? (
-    serverData.map((debut) => <li key={debut._id}>{debut.characterName}</li>)
-  ) : (
-    <h1>loading...</h1>
-  );
+  serverData.map((debut) => <li key={debut._id}>{debut.characterName}</li>)
 }
 ```
 
@@ -611,7 +603,7 @@ Now it will render inside this component instead of in the main `App.js`
 The `AllDebuts.js` should now overall look like this:
 
 ```jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { API_URL } from "./constants";
 import axios from "axios";
 
@@ -634,13 +626,9 @@ function AllDebuts() {
 
   return (
     <ul>
-      {serverData.length > 0 ? (
-        serverData.map((debut) => (
-          <li key={debut._id}>{debut.characterName}</li>
-        ))
-      ) : (
-        <h1>loading...</h1>
-      )}
+      serverData.map((debut) => (
+        <li key={debut._id}>{debut.characterName}</li>
+      ))
     </ul>
   );
 }
@@ -828,9 +816,7 @@ This is because all we need to do is write the database functionality on the Con
 ```jsx
 async function createOneDebut(req, res) {
   try {
-    let newDebut = req.body;
-
-    await Debut.create(newDebut);
+    const newDebut = await Debut.create(req.body);
 
     res.json({
       message: "success",
@@ -848,7 +834,7 @@ async function createOneDebut(req, res) {
 }
 ```
 
-The first thing to do is to is to make a `newDebut` object that will capture all the details about the debut from the body of the request. Then, send that to the database using `await Debut.create(newDebut);`. Finally, respond with the newly created debut with a success message, to let you know that the data now exists in MongoDB.
+The first thing to do is to is to send the request body to the database using `await Debut.create(req.body);`. Then, we respond with the newly created debut and a success message, to let the client know that the data now exists in MongoDB.
 
 75. Make sure to export this function at the bottom of the page:
 
@@ -899,7 +885,7 @@ For the user to be able to create a document of data and send it to the database
 79. Import `useState`:
 
 ```jsx
-import React, { useState } from `react`;
+import { useState } from `react`;
 ```
 
 80. Create a functional component with an empty return parens:
@@ -1083,7 +1069,7 @@ navigate("/debuts");
 Overall, your `CreateDebut.js` should look like this:
 
 ```jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { API_URL } from "./constants";
 import { useNavigate } from "react-router-dom";
 
@@ -1361,7 +1347,7 @@ import { Link } from "react-router-dom";
 Your `AllDebuts.js` page should now look like this:
 
 ```jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "./constants";
 import axios from "axios";
@@ -1385,15 +1371,11 @@ function AllDebuts() {
 
   return (
     <ul>
-      {serverData.length > 0 ? (
         serverData.map((debut) => (
           <li key={debut._id}>
             <Link to={`/debuts/${debut.characterName}`}>{debut.characterName}</Link>
           </li>
         ))
-      ) : (
-        <h1>loading...</h1>
-      )}
     </ul>
   );
 }
