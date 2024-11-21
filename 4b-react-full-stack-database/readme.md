@@ -256,9 +256,9 @@ const debutsSchema = new mongoose.Schema({
     required: true,
   },
 
-  debutFilm: String,,
+  film: String,,
 
-  debutYear: Number,,
+  year: Number,,
 });
 
 const Debut = mongoose.model("Debut", debutsSchema);
@@ -385,7 +385,7 @@ This section might be easier with a second window of VSCode open. If you're adju
 
 41. Use command `cd client` followed by `npm start` to make sure that this works, and that you can see `localhost:3000` in your browser.
 
-42. Shut down the server for now using `ctrl + c`. Use command `npm install react-router-dom axios dotenv` and once it's done, start the server back up with `npm run dev`
+42. Shut down the server for now using `ctrl + c`. Use command `npm install react-router-dom axios` and once it's done, start the server back up with `npm run dev`
 
 We're going to be using `react-router-dom` to manage front-end URL changes
 
@@ -881,8 +881,8 @@ router.post("/createOneDebut", createOneDebut);
 ```js
 {
     "name": "America Chavez",
-    "debutFilm": "Dr. Strange: Multiverse of Madness",
-    "debutYear": 2022
+    "film": "Dr. Strange: Multiverse of Madness",
+    "year": 2022
 }
 ```
 
@@ -918,13 +918,13 @@ export default CreateDebut;
 
 Next, we're going to need state variables to temporarily hold debut data. When we send the data from here, we will refer to these state variables as the values.
 
-82. Create a state variable for `name`, `debut`, and `debutYear`. These can all be completed in a single object:
+82. Create a state variable for `name`, `debut`, and `year`. These can all be completed in a single object:
 
 ```jsx
 const [debut, setDebut] = useState({
   characterName: "",
-  debutFilm: "",
-  debutYear: 0,
+  film: "",
+  year: 0,
 });
 ```
 
@@ -937,14 +937,14 @@ As a user fills out the form, these state variables should be updated with the v
 <input value={debut.characterName} onChange={(e) => setDebut({...debut, characterName: e.target.value})}/>
 <br /><br />
 <label>DebutFilm</label>
-<input value={debut.debutFilm} onChange={(e) => setDebut({...debut, debutFilm: e.target.value})}/>
+<input value={debut.film} onChange={(e) => setDebut({...debut, film: e.target.value})}/>
 <br /><br />
 <label>DebutYear</label>
-<input value={debut.debutYear} onChange={(e) => setDebut({...debut, debutYear: e.target.value})}/>
+<input value={debut.year} onChange={(e) => setDebut({...debut, year: e.target.value})}/>
 <br /><br />
 ```
 
-When we do something like `onChange={(e) => setDebut({...debut, debutFilm: e.target.value})}`, each key stroke is temporarily saved into it's state variable. It make it easy to keep track of what the user is typing in at all times.
+When we do something like `onChange={(e) => setDebut({...debut, film: e.target.value})}`, each key stroke is temporarily saved into it's state variable. It make it easy to keep track of what the user is typing in at all times.
 
 Before we make sure that it works, let's add a route to this component and test our ability to render the form itself.
 
@@ -999,8 +999,8 @@ async function postDebut() {
 
     setDebut({
       characterName: "",
-      debutFilm: "",
-      debutYear: 0,
+      film: "",
+      year: 0,
     });
 
     const serverResponse = await response.json();
@@ -1045,7 +1045,7 @@ function handleOnSubmit(event) {
   <br />
   <br />
   <label>Debut Year</label>
-  <input value={debutYear} onChange={(e) => setDebutYear(e.target.value)} />
+  <input value={year} onChange={(e) => setDebutYear(e.target.value)} />
   <br />
   <br />
 
@@ -1092,8 +1092,8 @@ function CreateDebut() {
 
   const [debut, setDebut] = useState({
     characterName: "",
-    debutFilm: "",
-    debutYear: 0,
+    film: "",
+    year: 0,
   });
 
   async function postDebut() {
@@ -1110,8 +1110,8 @@ function CreateDebut() {
 
       setDebut({
         characterName: "",
-        debutFilm: "",
-        debutYear: 0,
+        film: "",
+        year: 0,
       });
 
       const serverResponse = await response.json();
@@ -1138,18 +1138,18 @@ function CreateDebut() {
       <br />
       <label>DebutFilm</label>
       <input
-        value={debut.debutFilm}
+        value={debut.film}
         onChange={(e) =>
-          setDebut({ ...debut, debutFilm: e.target.value })
+          setDebut({ ...debut, film: e.target.value })
         }
       />
       <br />
       <br />
       <label>DebutYear</label>
       <input
-        value={debut.debutYear}
+        value={debut.year}
         onChange={(e) =>
-          setDebut({ ...debut, debutYear: e.target.value })
+          setDebut({ ...debut, year: e.target.value })
         }
       />
       <br />
@@ -1299,8 +1299,8 @@ import { API_URL } from "./constants";
 
 ```jsx
 const [debut, setDebut] = useState({
-  debutFilm: "",
-  debutYear: "",
+  film: "",
+  year: "",
 });
 ```
 
@@ -1340,8 +1340,8 @@ This way, when we try to go to `localhost:3000/debuts/Hulk` for example, the tex
 108. Display the movie and year under the `<h1>` tag:
 
 ```jsx
-<p>Debuted in <span>{debut.debutFilm}</span></p>
-<p>Released in the year <span>{debut.debutYear}</span></p>
+<p>Debuted in <span>{debut.film}</span></p>
+<p>Released in the year <span>{debut.year}</span></p>
 ```
 
 Now that it works, let's make sure the list of all debuts are also links to their own page.
@@ -1414,7 +1414,7 @@ function OneDebut() {
 
   const [debut, setDebut] = useState({
     debut: "",
-    debutYear: "",
+    year: "",
   });
 
   useEffect(() => {
@@ -1440,11 +1440,11 @@ function OneDebut() {
       <ul>
         <li>
           Debuted in&nbsp;
-          <span>{debut.debutFilm}</span>
+          <span>{debut.film}</span>
         </li>
         <li>
           Released in&nbsp;
-          <span>{debut.debutYear}</span>
+          <span>{debut.year}</span>
         </li>
       </ul>
     </>
@@ -1475,12 +1475,12 @@ async function updateDebut(req, res) {
     let updatedDebut = {
       _id: targetDebut._id,
       characterName: targetDebut.name,
-      debutFilm: req.body.debutFilm
-        ? req.body.debutFilm
-        : targetDebut.debutFilm,
-      debutYear: req.body.debutYear
-        ? req.body.debutYear
-        : targetDebut.debutYear,
+      film: req.body.film
+        ? req.body.film
+        : targetDebut.film,
+      year: req.body.year
+        ? req.body.year
+        : targetDebut.year,
     };
 
     await Debut.updateOne(
@@ -1538,7 +1538,7 @@ Here is the route:
 router.put("/updateDebut/:id", updateDebut);
 ```
 
-Make sure to test it with Postman by making the PUT request to `localhost:3001/api/updateDebut/:id`. You will need to have Mongo Compass open to grab the `_id` of a debut in order to target it properly. Also make sure that the properties `debut` and `debutYear` are in the body of the request.
+Make sure to test it with Postman by making the PUT request to `localhost:3001/api/updateDebut/:id`. You will need to have Mongo Compass open to grab the `_id` of a debut in order to target it properly. Also make sure that the properties `debut` and `year` are in the body of the request.
 
 Once it works, let's move on to the front-end so that a user can use this update functionality.
 
@@ -1548,7 +1548,7 @@ Before we write any code, let's plan out how this is going to work from the user
 
 - The user will be on the `OneDebut` page
 - The user will click on a `edit details` button
-- The debut's details (debut and debutYear) will change from being text, to being input fields
+- The debut's details (debut and year) will change from being text, to being input fields
 - The user will change the text within the input fields
 - The user will click a `save` button
 - This will trigger a PUT request to our server
@@ -1565,7 +1565,7 @@ const [isEditing, setIsEditing] = useState(false);
 
 The idea is that when this is set to false, the debut details will be plain text. When it is set to true, it will be an input field.
 
-114. For `debut.debutFilm` and `debut.debutYear`, write a ternary operator that will render either text or an input based on our state variable `isEditing`:
+114. For `debut.film` and `debut.year`, write a ternary operator that will render either text or an input based on our state variable `isEditing`:
 
 ```jsx
 <p>
@@ -1573,9 +1573,9 @@ The idea is that when this is set to false, the debut details will be plain text
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutFilm" value={debut.debutFilm}/>
+                    <input type="text" name="film" value={debut.film}/>
                     :
-                    <span>{debut.debutFilm}</span>
+                    <span>{debut.film}</span>
                 }
             </p>
             <p>
@@ -1583,9 +1583,9 @@ The idea is that when this is set to false, the debut details will be plain text
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutYear" value={debut.debutYear}/>
+                    <input type="text" name="year" value={debut.year}/>
                     :
-                    <span>{debut.debutYear}</span>
+                    <span>{debut.year}</span>
                 }
             </p>
 ```
@@ -1634,15 +1634,15 @@ function updateDebut({ target }) {
 There are a lot of things happening here, so let's walk through it first.
 
 - The parameters that this function takes will be the input field itself, which is why it's wrapped in `{}` curly brackets. The HTML attributes such as `name` and `value` become properties of this object in JS.
-- In any state variable, the `setState` function can take a callback function to make use of it's previous state. In this case, `setDebut` is making use of it's previous state which is an object that holds the `debutFilm` and `debutYear` properties.
-- We use a spread operator to set the state variable to the values it already has, but then we redefine one of the properties with `target.name` and `target.value`. Remember that `target.name` will either be `debutFilm` or `debutYear`, depending on the input field that is currently being typed into. `target.value` will be the value of the input field itself.
+- In any state variable, the `setState` function can take a callback function to make use of it's previous state. In this case, `setDebut` is making use of it's previous state which is an object that holds the `film` and `year` properties.
+- We use a spread operator to set the state variable to the values it already has, but then we redefine one of the properties with `target.name` and `target.value`. Remember that `target.name` will either be `film` or `year`, depending on the input field that is currently being typed into. `target.value` will be the value of the input field itself.
 
 For example, let's say we're at `localhost:3000/debuts/Hulk` and we are editing the debut details. The `setDebut` function basically looks like this:
 
 ```jsx
 setDebut({
   debut: "The Avengers",
-  debutYear: 2012,
+  year: 2012,
 });
 ```
 
@@ -1651,7 +1651,7 @@ If we type into the input field for `debut` and change the movie name to "Hulk",
 ```jsx
 setDebut({
   debut: "Hulk",
-  debutYear: 2012,
+  year: 2012,
 });
 ```
 
@@ -1665,9 +1665,9 @@ This way, we can use this same function for both input fields.
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutFilm" value={debut.debutFilm} onChange={updateDebut}/>
+                    <input type="text" name="film" value={debut.film} onChange={updateDebut}/>
                     :
-                    <span>{debut.debutFilm}</span>
+                    <span>{debut.film}</span>
                 }
             </p>
             <p>
@@ -1675,9 +1675,9 @@ This way, we can use this same function for both input fields.
                 {
                     isEditing
                     ?
-                    <input type="text" name="debutYear" value={debut.debutYear} onChange={updateDebut}/>
+                    <input type="text" name="year" value={debut.year} onChange={updateDebut}/>
                     :
-                    <span>{debut.debutYear}</span>
+                    <span>{debut.year}</span>
                 }
             </p>
 ```
@@ -1708,7 +1708,7 @@ Again, there's a lot here so let's walk through what is happening
 
 - We are using `e.preventDefault();` because this function will be attached to a form, and we want to prevent refreshing the page
 - The console log is useful for knowing when this function runs
-- We are sending `debutFilm` and `debutYear` as the body of this request, so we are grabbing those values from our state variable `debut`
+- We are sending `film` and `year` as the body of this request, so we are grabbing those values from our state variable `debut`
 - We perform a `fetch` to our server, and, when that network call is done, we set `isEditing` to false so that the input fields become plain text.
 
 120. Change the `useEffect` so that it runs either when `name` or `isEditing` changes:
@@ -1745,12 +1745,12 @@ return (
         {isEditing ? (
           <input
             type="text"
-            name="debutFilm"
-            value={debut.debutFilm}
+            name="film"
+            value={debut.film}
             onChange={updateDebut}
           />
         ) : (
-          <span>{debut.debutFilm}</span>
+          <span>{debut.film}</span>
         )}
       </p>
       <p>
@@ -1758,12 +1758,12 @@ return (
         {isEditing ? (
           <input
             type="text"
-            name="debutYear"
-            value={debut.debutYear}
+            name="year"
+            value={debut.year}
             onChange={updateDebut}
           />
         ) : (
-          <span>{debut.debutYear}</span>
+          <span>{debut.year}</span>
         )}
       </p>
       {isEditing ? <button type="submit">Save Changes</button> : <br />}
@@ -1897,8 +1897,8 @@ function OneDebut() {
   const { name } = useParams();
 
   const [debut, setDebut] = useState({
-    debutFilm: "",
-    debutYear: 0,
+    film: "",
+    year: 0,
   });
 
   // 1A. the true/false value that users can control - initially false, because reading info goes before editing
@@ -1920,8 +1920,8 @@ function OneDebut() {
   // we can see info about one debut.
   // On the backend, we have a route that will accept an object that looks like:
   // {
-  //     debutFilm: "Hawkeye",
-  //     debutYear: 2021
+  //     film: "Hawkeye",
+  //     year: 2021
   // }
 
   // I want to give the users the ability to do this on the front end. Here's what I imagine they might need:
@@ -1950,10 +1950,10 @@ function OneDebut() {
   //     setDebut((previousValue) => {
   //         return {
   //             ...previousValue,
-  //             debutFilm: val
+  //             film: val
   //         }
   //     })
-  //     console.log(debut.debutFilm)
+  //     console.log(debut.film)
   // }
 
   // 2A - REDUNDANT
@@ -1961,10 +1961,10 @@ function OneDebut() {
   //     setDebut((previousValue) => {
   //         return {
   //             ...previousValue,
-  //             debutYear: val
+  //             year: val
   //         }
   //     })
-  //     console.log(debut.debutYear)
+  //     console.log(debut.year)
   // }
 
   // 2B
@@ -2024,12 +2024,12 @@ function OneDebut() {
           {isEditing ? (
             <input
               type="text"
-              name="debutFilm"
-              value={debut.debutFilm}
+              name="film"
+              value={debut.film}
               onChange={(e) => updateDebut(e)}
             />
           ) : (
-            <span>{debut.debutFilm}</span>
+            <span>{debut.film}</span>
           )}
         </p>
         <p>
@@ -2038,12 +2038,12 @@ function OneDebut() {
           {isEditing ? (
             <input
               type="text"
-              name="debutYear"
-              value={debut.debutYear}
+              name="year"
+              value={debut.year}
               onChange={(e) => updateDebut(e)}
             />
           ) : (
-            <span>{debut.debutYear}</span>
+            <span>{debut.year}</span>
           )}
         </p>
         {isEditing ? <button type="submit">Save Changes</button> : <br />}
